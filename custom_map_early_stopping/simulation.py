@@ -2,11 +2,35 @@ import numpy as np
 import matplotlib.pyplot as plt
 from maze_generator import generate_maze
 from robot import Robot
+import sys
 
-GRID_SIZE = 10000
-maze = generate_maze(GRID_SIZE)
-start = (0, 0)
-goal = (GRID_SIZE-1, GRID_SIZE-1)
+def load_custom_map(map_file):
+    data = np.load(map_file)
+    return data['grid'], data['start'], data['goal']
+
+use_custom_map = True
+map_file_name = "./custom_map.npz"
+
+# Check for custom map argument
+if use_custom_map:
+    maze, start, goal = load_custom_map(map_file_name)
+    start = (start[0], start[1])
+    goal = (goal[0], goal[1])
+    GRID_SIZE = maze.shape[0]
+else:
+    from maze_generator import generate_maze
+    GRID_SIZE = 1000
+    maze = generate_maze(GRID_SIZE)
+    start = (0, 0)
+    goal = (GRID_SIZE-1, GRID_SIZE-1)
+
+robot = Robot(start, goal, map_size=GRID_SIZE, vision_radius=50)
+robot.known_map = np.copy(maze)
+
+# GRID_SIZE = 10000
+# maze = generate_maze(GRID_SIZE)
+# start = (0, 0)
+# goal = (GRID_SIZE-1, GRID_SIZE-1)
 robot = Robot(start, goal, map_size=GRID_SIZE, vision_radius=50)
 
 # Visualization setup
@@ -61,6 +85,10 @@ plt.show()
 
 step = 0
 while robot.current_position != robot.goal:
+
+    print(goal)
+    print(robot.current_position)
+
     step += 1
 
     # 1. Sense environment first
@@ -110,7 +138,7 @@ while robot.current_position != robot.goal:
     ax_local.set_title(f"Local View - Step {step}")
     ax_global.set_title(f"Global Overview - Step {step}")
 
-    plt.pause(0.001)
+    plt.pause(0.01)
     fig.canvas.flush_events()
 
 # Final visualization
