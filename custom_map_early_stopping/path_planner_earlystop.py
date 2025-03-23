@@ -22,6 +22,8 @@ def plan_path(grid, start, goal, block_size=100, sw=55, slim=60):
             came_from = {(sx, sy): None}
             g_cost = {(sx, sy): 0}
             found = False
+            best_node = (sx, sy)
+            best_h = manhattan(sx, sy, gx, gy)
             while open_list:
                 _, g, x, y = heappop(open_list)
                 if (x, y) == (gx, gy):
@@ -37,17 +39,25 @@ def plan_path(grid, start, goal, block_size=100, sw=55, slim=60):
                             g_cost[(nx, ny)] = ng
                             came_from[(nx, ny)] = (x, y)
                             heappush(open_list, (ng + manhattan(nx, ny, gx, gy), ng, nx, ny))
-            if not found:
-                break
+                            # Track best node (closest to goal)
+                            h = manhattan(nx, ny, gx, gy)
+                            if h < best_h:
+                                best_h = h
+                                best_node = (nx, ny)
+
+            # Reconstruct path to goal or best node reachable
             seg_path = []
-            node = (gx, gy)
+            node = (gx, gy) if found else best_node
+            if node not in came_from:
+                # No reachable node at all, return empty
+                return path
             while node is not None:
                 seg_path.append(node)
                 node = came_from[node]
             seg_path.reverse()
             path.extend(seg_path if first_segment else seg_path[1:])
             return path
-
+        
         # Sliding window search area
         wx0 = max(0, sx - block_size//2)
         wy0 = max(0, sy - block_size//2)

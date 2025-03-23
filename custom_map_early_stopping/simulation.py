@@ -86,9 +86,8 @@ plt.show()
 step = 0
 while robot.current_position != robot.goal:
 
-    print(goal)
     print(robot.current_position)
-
+    print(goal)
     step += 1
 
     # 1. Sense environment first
@@ -97,6 +96,7 @@ while robot.current_position != robot.goal:
     # 2. Plan path
     path = robot.plan_path()
 
+    print(path)
     # 3. Move if valid path exists
     if path and len(path) > 1:
         robot.move_one_step(path)
@@ -138,8 +138,12 @@ while robot.current_position != robot.goal:
     ax_local.set_title(f"Local View - Step {step}")
     ax_global.set_title(f"Global Overview - Step {step}")
 
-    plt.pause(0.01)
-    fig.canvas.flush_events()
+    try:
+        plt.pause(0.001)
+        fig.canvas.flush_events()
+    except Exception as e:
+        print(f"Visualization error: {str(e)}")
+        exit()
 
 # Final visualization
 ax_local.set_title(f"Goal Reached in {step} Steps!")
