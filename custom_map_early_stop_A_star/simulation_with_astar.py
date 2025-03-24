@@ -79,10 +79,16 @@ def run_simulation():
                     if maze.grid[ii][jj] == 1:
                         wall_count += 1
             # Mark as wall if >=30% of block cells are walls
-            if wall_count >= int(block_h * block_w * 0.3):
-                global_base[i][j] = 2  # mostly wall in that block
+            if use_custom_map == False:
+                if wall_count >= int(block_h * block_w * 0.3):
+                    global_base[i][j] = 2  # mostly wall in that block
+                else:
+                    global_base[i][j] = 1  # mostly free in that block
             else:
-                global_base[i][j] = 1  # mostly free in that block
+                if wall_count > 0:
+                    global_base[i][j] = 2  # mark as wall if any obstacles present
+                else:
+                    global_base[i][j] = 1  # free space
     # Mark the goal on the global base map
     gx, gy = robot.goal
     goal_i, goal_j = gx // block_h, gy // block_w
