@@ -7,6 +7,7 @@ import time
 # Global variables to track planner execution time
 planner_call_count = 0
 total_planner_time = 0.0
+print_average_time = True
 
 def get_average_planner_time():
     global planner_call_count, total_planner_time
@@ -68,8 +69,9 @@ class Robot:
         planner_call_count += 1
         total_planner_time += elapsed_time
 
-        avg = get_average_planner_time()
-        print(avg)
+        if print_average_time:
+            avg = get_average_planner_time()
+            print(avg)
 
         return path
 

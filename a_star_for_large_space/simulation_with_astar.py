@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 from maze_generator import Maze
 from robot import Robot
 
-algorithm_type = "jps"
-
+algorithm_type = "astar"  # "astar" or "jps"
+ 
 def run_simulation():
     # Create a 1000x1000 random maze and initialize the robot (using A* by default)
     maze = Maze(1000, 1000)
@@ -115,7 +115,7 @@ def run_simulation():
         img_global.set_data(global_display)
         fig_local.canvas.draw()
         fig_global.canvas.draw()
-        plt.pause(0.2)  # small delay for animation effect
+        plt.pause(0.01)  # small delay for animation effect
 
         # Termination conditions
         if path is None:

@@ -3,6 +3,17 @@ Robot module: contains Robot class that navigates the maze with limited vision.
 """
 import path_planner_astar
 import path_planner_jps
+import time
+
+planner_call_count = 0
+total_planner_time = 0.0
+print_average_time = True
+
+def get_average_planner_time():
+    global planner_call_count, total_planner_time
+    if planner_call_count == 0:
+        return 0
+    return total_planner_time / planner_call_count
 
 class Robot:
     def __init__(self, maze, start=(0,0), goal=None, vision_radius=5, algorithm='astar'):
@@ -54,7 +65,20 @@ class Robot:
         Plan a path from the robot's current position to the goal using known information.
         Returns a list of cells from current position to goal (inclusive), or None if no path is found.
         """
-        return self._planner_func(self.pos, self.goal, self.known_map)
+        global planner_call_count, total_planner_time
+
+        start_time = time.time()
+        path = self._planner_func(self.pos, self.goal, self.known_map)
+        elapsed_time = time.time() - start_time
+
+        planner_call_count += 1
+        total_planner_time += elapsed_time
+
+        if print_average_time:
+            avg = get_average_planner_time()
+            print(avg)
+
+        return path
 
     def move_one_step(self, path):
         """
